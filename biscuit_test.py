@@ -226,7 +226,7 @@ def test_key_selection():
         elif kid == 1:
             return root.public_key
         else:
-            raise Exception("Unknown key identifier") 
+            raise Exception("Unknown key identifier")
 
     biscuit_builder0 = BiscuitBuilder("user({id})", { 'id': "1234" })
     token0 = biscuit_builder0.build(other_root.private_key).to_base64()
@@ -384,10 +384,10 @@ def test_biscuit_inspection():
     builder.set_root_key_id(42)
     token2 = builder.build(kp.private_key).append(BlockBuilder('test(false);'))
     print(token2.to_base64())
-    
+
     utoken1 = UnverifiedBiscuit.from_base64(token1.to_base64())
     utoken2 = UnverifiedBiscuit.from_base64(token2.to_base64())
-    
+
     assert utoken1.root_key_id() is None
     assert utoken2.root_key_id() == 42
 
@@ -442,3 +442,15 @@ def test_keypair_from_private_key_pem():
     private_key_hex = "0499694d0da05dcac40052663e71d50c1539465f8926dfe92033cf7aaad53d65"
     kp = KeyPair.from_private_key_pem(pem=private_key_pem)
     assert kp.private_key.to_hex() == private_key_hex
+
+def test_append_third_party_block():
+    root_kp = KeyPair()
+    external_kp = KeyPair()
+
+    builder = BiscuitBuilder("user({user});", {'user': "123"})
+    biscuit = builder.build(root_kp.private_key)
+
+    third_party_block = BlockBuilder("external_fact({fact});", {'fact': "456"})
+    new_biscuit = biscuit.append_third_party_block(external_kp, third_party_block)
+
+    assert new_biscuit.block_external_key(1).to_hex() == external_kp.public_key.to_hex()

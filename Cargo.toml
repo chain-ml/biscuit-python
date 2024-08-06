@@ -2,6 +2,7 @@
 name = "biscuit-python"
 version = "0.2.1"
 edition = "2021"
+rust-version = "1.79"
 
 [lib]
 name = "biscuit_auth"
@@ -13,3 +14,4 @@ pyo3 = { version = "0.18.3", features = ["extension-module", "chrono"]}
 hex = "0.4"
 base64 = "0.13.0"
 chrono = "0.4"
+time = "0.3.36"
